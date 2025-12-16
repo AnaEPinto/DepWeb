@@ -18,7 +18,7 @@ if (empty($_SESSION['csrf_token'])) {
 
     <?php require('includes/nav.php'); ?>
 
-    <main class="flex-grow relative flex items-center justify-center">
+    <div class="flex-grow relative flex items-center justify-center">
 
         <img src="imagem/login.jpg" alt="Cozinados" class="absolute inset-0 w-full h-full object-cover px-10">
 
@@ -57,8 +57,7 @@ if (empty($_SESSION['csrf_token'])) {
                 </button>
             </form>
         </div>
-
-    </main>
+    </div>
 
     <?php require('includes/footer.php'); ?>
 
