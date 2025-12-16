@@ -15,14 +15,13 @@
     <?php require('includes/nav.php'); ?>
 
     <div class="flex-grow">
-
         <div class="">
             <div class="hidden md:flex px-10">
                 <img class="w-full rounded-sm" src="imagem/cozinha1.png" alt="Imagem de uma cozinha">
             </div>
 
             <div class="max-w-7xl mx-auto relative md:hidden px-10">
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 bg-[rgb(245,245,245)]/75 font-bold text-lg text-center border rounded-md backdrop-blur-sm">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-2 bg-[#FFFFFF]/75 font-bold text-lg text-center border rounded-md backdrop-blur-sm">
                     Bem-vindo(a) a The Recipe!
                 </div>
                 <img class="w-auto h-52 rounded-sm object-center" src="imagem/cozinha1.png" alt="Imagem de uma cozinha">

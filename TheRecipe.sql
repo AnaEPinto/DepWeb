@@ -1,40 +1,20 @@
--- --------------------------------------------------------
--- Anfitrião:                    127.0.0.1
--- Versão do servidor:           8.4.3 - MySQL Community Server - GPL
--- SO do servidor:               Win64
--- HeidiSQL Versão:              12.8.0.6908
--- --------------------------------------------------------
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8 */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
-
--- A despejar estrutura da base de dados para therecipe
-DROP DATABASE IF EXISTS `therecipe`;
+	-- A despejar estrutura da base de dados para therecipe
 CREATE DATABASE IF NOT EXISTS `therecipe` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `therecipe`;
 
--- A despejar estrutura para tabela therecipe.favoritos
-DROP TABLE IF EXISTS `favoritos`;
+	-- A despejar estrutura para tabela therecipe.favoritos
 CREATE TABLE IF NOT EXISTS `favoritos` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_receita` int NOT NULL,
   `id_utilizador` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+	) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- A despejar dados para tabela therecipe.favoritos: ~1 rows (aproximadamente)
 REPLACE INTO `favoritos` (`id`, `id_receita`, `id_utilizador`) VALUES
-	(1, 34, 1);
+	(12, 1, 1);
 
 -- A despejar estrutura para tabela therecipe.receitas
-DROP TABLE IF EXISTS `receitas`;
 CREATE TABLE IF NOT EXISTS `receitas` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -93,19 +73,19 @@ REPLACE INTO `receitas` (`id`, `nome`, `tempo`, `ingredientes`, `preparacao`, `i
 	(116, 'Rolo de Carne com Massa Folhada', '45 min', '1 c. sopa de azeite<br />\r\n1 cebola picada<br />\r\n2 dentes de alho picados<br />\r\n400 g de carne picada<br />\r\nOrégãos q.b.<br />\r\nAlecrim seco q.b.<br />\r\n1 folha de louro<br />\r\n1 c. café de sal<br />\r\nPimenta q.b.<br />\r\n1 embalagem de massa folhada<br />\r\n100g de espinafres<br />\r\n1 ovo batido<br />\r\nSalada q.b.', 'Numa frigideira, refogue a cebola picada e os dentes de alho picados finamente num fio de azeite.<br />\r\nQuando a cebola estiver tenra, junte a carne, polvilhe com os orégãos e o alecrim, acrescente o louro e envolva bem.<br />\r\nTempere com sal e pimenta e cozinhe até a carne ficar bem dourada.<br />\r\nRetire o louro e deixe arrefecer.<br />\r\nEstenda a massa folhada e, a meio, disponha a carne picada sobre o comprido.<br />\r\nPor cima coloque os espinafres e enrole, cobrindo tudo com a massa e apertando bem dos lados, de modo a criar um rolo fechado.<br />\r\nPincele com o ovo batido e leve ao forno por cerca de 20 minutos ou até a massa estar bem cozinhada e dourada.<br />\r\nAcompanhe com uma salada.', 'e3fb15b6f293e1191a05dd50f908cd65.jpg', 'Carne', 'Uma versão prática e deliciosa do clássico bife Wellington: este rolo de carne picada, envolvido em massa folhada, é perfeito para impressionar sem complicações.', 4, 'Económico');
 
 -- A despejar estrutura para tabela therecipe.utilizadores
-DROP TABLE IF EXISTS `utilizadores`;
 CREATE TABLE IF NOT EXISTS `utilizadores` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(200) DEFAULT NULL,
   `password` varchar(350) DEFAULT NULL,
   `email` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- A despejar dados para tabela therecipe.utilizadores: ~2 rows (aproximadamente)
+-- A despejar dados para tabela therecipe.utilizadores: ~3 rows (aproximadamente)
 REPLACE INTO `utilizadores` (`id`, `nome`, `password`, `email`) VALUES
 	(1, 'Eduarda', 'Eduarda1234', 'ana.eduarda.pinto71@gmail.com'),
-	(5, 'Ana', 'Duda12345', 'ana.eduarda.pinto2005@gmail.com');
+	(5, 'Ana', 'Duda12345', 'ana.eduarda.pinto2005@gmail.com'),
+	(6, 'Duda', 'Dudaduda123', 'ana.eduarda.71@gmail.com');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

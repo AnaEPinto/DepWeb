@@ -20,7 +20,7 @@ if (ini_get("session.use_cookies")) {
 }
 
 // 5. Redireciona de volta para a página anterior (ou para a mesma página)
-$referencia = $_SERVER['HTTP_REFERER'] ?? '../index.php'; 
+$referencia = $_SERVER["HTTP_REFERER"] ?? "../index.php";
 
 // Redireciona o usuário de volta para onde ele estava
 header("Location: $referencia");

@@ -49,6 +49,16 @@
         $descricao    = $receita->descricao;
         $quantidade   = $receita->quantidade;
         $orcamento    = $receita->orcamento;
+
+        $userId = $_SESSION['user_id'] ?? null;
+        $estaFavorito = false;
+        if ($userId) {
+            $stmtFav = $dbh->prepare("SELECT 1 FROM favoritos WHERE id_utilizador = :uid AND id_receita = :rid");
+            $stmtFav->bindValue(':uid', $userId);
+            $stmtFav->bindValue(':rid', $idReceita);
+            $stmtFav->execute();
+            $estaFavorito = $stmtFav->fetchColumn() ? true : false;
+        }
     ?>
     
    <div class="px-2 mt-10 sm:px-4 md:px-8 lg:px-20 xl:px-32">
@@ -56,35 +66,43 @@
         <p class="sm:text-lg md:text-xl text-gray-600 text-center max-w-3xl mx-auto mb-6"><?= $descricao ?></p>
         
         <div class="max-w-6xl mx-auto mt-10">
-            <div class="bg-gray-50 rounded-lg border border-gray-200 w-full">
-                <div class="grid grid-cols-2 md:grid-cols-4 text-gray-700 w-full">
+           <div class="bg-gray-50 rounded-lg border border-gray-200 w-full mt-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 text-gray-700">
                     <div class="flex items-center gap-2 pl-6 py-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-black">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                         <span class="font-medium"><?= $tempo ?></span>
                     </div>
+
                     <div class="flex items-center gap-2 pl-6 py-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-black">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                         </svg>
                         <span class="font-medium"><?= $quantidade ?> pessoas</span>
                     </div>
+
                     <div class="flex items-center gap-2 pl-6 py-2">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-black">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 7.756a4.5 4.5 0 1 0 0 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                         </svg>
                         <span class="font-medium"><?= $orcamento ?></span>
                     </div>
-                    <button class="flex items-center gap-2 pl-6 py-2 rounded-lg hover:text-red-500 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                        </svg>
-                        <span class="font-medium">Favorito</span>
-                    </button>
+
+                    <div class="flex items-center gap-2 pl-6 py-2">
+                        <?php if ($userId): ?>
+                            <button class="favorito-btn flex items-center gap-1 hover:text-red-500 transition" data-id="<?= $idReceita ?>">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 <?= $estaFavorito ? 'text-red-500' : '' ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                <span class="font-medium">Favorito</span>
+                            </button>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
-        
+
+                    
            <div class="w-full mt-10 flex justify-center">
                 <img src="imagem/<?= $imagem ?>" alt="Receita <?= $idReceita ?>" class="w-full max-w-3xl h-[500px] object-cover rounded-lg shadow-md">
             </div>
@@ -144,5 +162,36 @@
     <div class="z-20 relative">
         <?php require('includes/footer.php'); ?>
     </div>
+
+    <script>
+    document.querySelectorAll('.favorito-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const receitaId = btn.dataset.id;
+
+            try {
+                const response = await fetch('auth/adicionarFavoritos.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'id=' + encodeURIComponent(receitaId)
+                });
+
+                const data = await response.json();
+
+                if (data.favorito) {
+                    btn.classList.remove('text-gray-400');
+                    btn.classList.add('text-red-500');
+                } else {
+                    btn.classList.remove('text-red-500');
+                    btn.classList.add('text-gray-400');
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar favorito:', error);
+                alert('Ocorreu um erro. Tente novamente.');
+            }
+        });
+    });
+    </script>   
+
+
 </body>
 </html>

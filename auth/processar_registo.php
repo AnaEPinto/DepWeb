@@ -29,8 +29,6 @@ $stmt->bindValue(':email', $email);
 $stmt->bindValue(':password', $password);
 $stmt->execute();
 
-
-
 $_SESSION['ligado'] = true;
 $_SESSION['user_id'] = $user->id;
 $_SESSION['email']  = $user->email;
