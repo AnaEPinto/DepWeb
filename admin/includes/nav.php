@@ -13,14 +13,6 @@
             </svg>
             <span class="font-bold">Gestão de Receitas</span>
         </a>
-
-        <a href="utilizadores.php"
-           class="flex items-center p-3 rounded-lg bg-white/40 transition font-semibold">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H9a2 2 0 01-2-2v-1a2 2 0 012-2h6a2 2 0 012 2v1a2 2 0 01-2 2z"/>
-            </svg>
-            Gestão de Utilizadores
-        </a>
     </nav>
 
     <div class="p-4">
