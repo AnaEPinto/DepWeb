@@ -197,9 +197,7 @@ $busca = $_GET['busca'] ?? '';
                 atualizarLista();
             }
         });
-
         atualizarLista();
-
     </script>
 </body>
 </html>
