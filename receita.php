@@ -1,24 +1,16 @@
 <?php
-    session_start();
-    require('ajax/connection.php');
+session_start();
+require('ajax/connection.php');
 
-    $id_receita = filter_input(INPUT_GET, 'receita', FILTER_VALIDATE_INT);
+// valida como inteiro, devolve null/false se for inválido
+$id_receita = filter_input(INPUT_GET, 'receita', FILTER_VALIDATE_INT);
 
-    if (!$id_receita) {
-        header('Location: index.php');
-        exit;
-    }
+if (!$id_receita) {
+    header('Location: index.php');
+    exit;
+}
 ?>
 
-<?php
-    if(isset($_GET['receita'])){
-        $idReceita = $_GET['receita'];
-    }else{
-        header('Location:index.html');
-        exit;
-    }
-    require('ajax/connection.php');
-?>
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
@@ -35,7 +27,7 @@
     <?php 
         $sql = 'SELECT * FROM receitas WHERE id = :id';
         $stmt = $dbh->prepare($sql);
-        $stmt->bindValue(':id', $idReceita);
+        $stmt->bindValue(':id', $id_receita);
         $stmt->execute();
 
         if(!$stmt || $stmt->rowCount() != 1){
@@ -44,7 +36,7 @@
         }   
 
         $receita = $stmt->fetchObject();
-        $idReceita    = $receita->id;
+        $id_receita    = $receita->id;
         $nome         = $receita->nome;
         $imagem       = $receita->imagem;
         $tempo        = $receita->tempo;
@@ -60,9 +52,9 @@
         if ($userId) {
             $stmtFav = $dbh->prepare("SELECT 1 FROM favoritos WHERE id_utilizador = :uid AND id_receita = :rid");
             $stmtFav->bindValue(':uid', $userId);
-            $stmtFav->bindValue(':rid', $idReceita);
+            $stmtFav->bindValue(':rid', $id_receita);
             $stmtFav->execute();
-            $estaFavorito = $stmtFav->fetchColumn() ? true : false;
+            $estaFavorito = $stmtFav->fetchColumn();
         }
     ?>
     
@@ -96,7 +88,7 @@
 
                     <div class="flex items-center gap-2 pl-6 py-2">
                         <?php if ($userId): ?>
-                            <button class="favorito-btn flex items-center gap-1 hover:text-red-500 transition" data-id="<?= $idReceita ?>">
+                            <button class="favorito-btn flex items-center gap-1 hover:text-red-500 transition" data-id="<?= $id_receita ?>">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 <?= $estaFavorito ? 'text-red-500' : '' ?>" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                 </svg>
@@ -109,7 +101,7 @@
 
                     
            <div class="w-full mt-10 flex justify-center">
-                <img src="imagem/<?= $imagem ?>" alt="Receita <?= $idReceita ?>" class="w-full max-w-3xl h-[500px] object-cover rounded-lg shadow-md">
+                <img src="imagem/<?= $imagem ?>" alt="Receita <?= $id_receita ?>" class="w-full max-w-3xl h-[500px] object-cover rounded-lg shadow-md">
             </div>
 
             <div class="mt-10 grid md:grid-cols-2 gap-12 items-start">
@@ -154,6 +146,13 @@
         <hr class="border-black mx-10 my-2">
     </div> 
 
+    <?php
+        $sqlComentarios = " SELECT c.comentario,  c.data_comentario, u.nome FROM comentario c JOIN utilizadores u ON u.id = c.id_utilizador WHERE c.id_receita = ? ORDER BY c.data_comentario DESC";
+        $stmtComentarios = $dbh->prepare($sqlComentarios);
+        $stmtComentarios->execute([$id_receita]);
+        $comentarios = $stmtComentarios->fetchAll();
+    ?>
+
     <?php if (isset($_SESSION['user_id'])):?>
 
     <div class="w-full max-w-xl mx-auto px-2">
@@ -162,7 +161,7 @@
         </h4>
 
         <form method="POST" action="auth/adicionarComentario.php" class="flex flex-col gap-3">
-            <textarea name="comentario" class="border border-black rounded-md p-3 text-lg" rows="4" placeholder="Escreva aqui o que achou desta receita..." required> </textarea>
+            <textarea name="comentario" class="border border-black rounded-md p-3 text-lg" rows="4" zrequired> </textarea>
 
             <input type="hidden" name="id_receita" value="<?= $id_receita ?>">
 
@@ -181,6 +180,29 @@
         </p>
     </div>
     
+    <?php endif; ?>
+
+    <?php if (!empty($comentarios)): ?>
+
+    <div class="space-y-4 px-24 pt-6 max-w-3xl mx-auto mb-10">
+        <?php foreach ($comentarios as $c): ?>
+        <p class="text-md text-gray-900 leading-relaxed"> Opinião de outros utilizadores: </p>   
+        <div class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+            <p class="text-sm text-gray-800 leading-relaxed"> <?= $c['comentario'] ?> </p>
+            <p class="text-xs text-gray-500 mt-1">
+                <span class="font-medium text-gray-700"><?= $c['nome'] ?></span>
+                comentou no dia
+                <?= date('d/m/Y \à\s H:i', strtotime($c['data_comentario'])) ?>
+            </p>
+
+        </div>
+        <?php endforeach; ?>
+    </div>
+
+    <?php else: ?>
+        <p class="text-center text-gray-600 py-4">
+            Ainda não há comentários para esta receita. Seja o primeiro a comentar!
+        </p>
     <?php endif; ?>
 
     <?php require('includes/footer.php'); ?>
@@ -213,7 +235,6 @@
         });
     });
     </script>   
-
 
 </body>
 </html>

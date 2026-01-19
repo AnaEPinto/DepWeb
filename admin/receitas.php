@@ -16,13 +16,13 @@ require('../ajax/connection.php');
         }
     </style>
 </head>
-<body class="">
 
+<body>
     <?php
         $sql = "SELECT * FROM receitas ORDER BY id DESC";
         $stmt = $dbh->prepare($sql);
         $stmt->execute();
-        $receitas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $receitas = $stmt->fetchAll();
     ?>
       
     <div class="flex h-screen">
@@ -56,7 +56,7 @@ require('../ajax/connection.php');
                         
                             <div class="p-5 flex flex-col flex-1">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-2">
-                                    <?= htmlspecialchars($receita['nome']) ?>
+                                    <?= $receita['nome'] ?>
                                 </h3>
 
                                <div class="mt-auto flex justify-end gap-2 text-sm">

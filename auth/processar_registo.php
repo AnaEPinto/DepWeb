@@ -1,39 +1,71 @@
 <?php
 session_start();
-require('../ajax/connection.php');   
+require('../ajax/connection.php');
 
-$nome = $_POST['nome']; 
-$email = $_POST['email'];
-$password = $_POST['password'];
+$nome       = trim($_POST['nome'] ?? '');
+$email      = trim($_POST['email'] ?? '');
+$password   = $_POST['password'] ?? '';
+$password2  = $_POST['password2'] ?? '';
 
-if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $valido = true;
-    list($utilizador, $dominio) = explode("@", $email);
-    
-    if (checkdnsrr($dominio, "MX")) {}
-
-} else {
-    $valido = false;
-}
-
-if (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) ||
-    !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password)) {
-    echo "Password não cumpre as regras!";
+if ($nome === '' || $email === '' || $password === '' || $password2 === '') {
+    $_SESSION['erro'] = "Todos os campos são obrigatórios.";
+    header("Location: ../registo.php");
     exit;
 }
 
-$sql = "INSERT INTO utilizadores (nome, email, password) VALUES (:nome, :email, :password)";
-$stmt = $dbh->prepare($sql);
-$stmt->bindValue(':nome', $nome);
-$stmt->bindValue(':email', $email);
-$stmt->bindValue(':password', $password);
-$stmt->execute();
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $_SESSION['erro'] = "Email inválido.";
+    header("Location: ../registo.php");
+    exit;
+}
 
-$_SESSION['ligado'] = true;
-$_SESSION['user_id'] = $user->id;
-$_SESSION['email']  = $user->email;
-$_SESSION['nome']   = $user->nome;
-$_SESSION['iniciais'] = strtoupper(substr($user->nome, 0, 1));
-header('Location: ../index.php');
+if ($password !== $password2) {
+    $_SESSION['erro'] = "As palavras-passe não coincidem.";
+    header("Location: ../registo.php");
+    exit;
+}
+
+if (strlen($password) < 8 ||
+    !preg_match('/[A-Z]/', $password) ||
+    !preg_match('/[a-z]/', $password) ||
+    !preg_match('/[0-9]/', $password)
+) {
+    $_SESSION['erro'] = "A palavra-passe deve ter pelo menos 8 caracteres, uma letra maiúscula, uma minúscula e um número.";
+    header("Location: ../registo.php");
+    exit;
+}
+
+
+$stmt = $dbh->prepare("SELECT id FROM utilizadores WHERE email = :email");
+$stmt->execute([':email' => $email]);
+
+if ($stmt->rowCount() > 0) {
+    $_SESSION['erro'] = "Este email já está registado.";
+    header("Location: ../registo.php");
+    exit;
+}
+
+$password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+$sql = "INSERT INTO utilizadores (nome, email, password)
+        VALUES (:nome, :email, :password)";
+
+$stmt = $dbh->prepare($sql);
+$stmt->execute([
+    ':nome'     => $nome,
+    ':email'    => $email,
+    ':password' => $password_hash
+]);
+
+$user_id = $dbh->lastInsertId();
+
+
+$_SESSION['ligado']    = true;
+$_SESSION['user_id']   = $user_id;
+$_SESSION['email']     = $email;
+$_SESSION['nome']      = $nome;
+$_SESSION['iniciais']  = strtoupper(substr($nome, 0, 1));
+
+header("Location: ../index.php");
 exit;
 ?>

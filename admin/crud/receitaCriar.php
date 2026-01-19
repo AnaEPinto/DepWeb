@@ -26,7 +26,7 @@ if (!isset($_FILES['imagem']) || $_FILES['imagem']['error'] !== 0) {
 }
 
 $permitidas = ['jpg','jpeg','png','webp'];
-$ext = strtolower(pathinfo($_FILES["imagem"]["name"], PATHINFO_EXTENSION));
+$ext = strtolower(pathinfo($_FILES["imagem"]["name"]));
 
 if (!in_array($ext, $permitidas)) {
     header('Location:../eventoNovo.php?erro=imagemformatoinvalido');
@@ -42,6 +42,7 @@ $preparacao   = nl2br($preparacao);
 
 $sql = "INSERT INTO receitas (nome, tempo, ingredientes, preparacao, categoria, descricao, quantidade, orcamento, imagem)
 VALUES (:nome, :tempo, :ingredientes, :preparacao, :categoria, :descricao, :quantidade, :orcamento, :imagem)";
+
 $stmt = $dbh->prepare($sql);
 $stmt->bindValue(':nome', $nome);
 $stmt->bindValue(':tempo', $tempo);

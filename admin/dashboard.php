@@ -17,12 +17,12 @@ require('../ajax/connection.php');
 
         <?php require('includes/nav.php'); 
 
-        $totalReceitas = $dbh->query("SELECT COUNT(*) FROM receitas")->fetchColumn();
-        $totalCategorias = $dbh->query("SELECT COUNT(DISTINCT categoria) FROM receitas")->fetchColumn();
+            $totalReceitas = $dbh->query("SELECT COUNT(*) FROM receitas")->fetchColumn();
+            $totalCategorias = $dbh->query("SELECT COUNT(DISTINCT categoria) FROM receitas")->fetchColumn();
 
-        $stmt = $dbh->prepare("SELECT id, nome FROM receitas ORDER BY id DESC LIMIT 5");
-        $stmt->execute();
-        $ultimasReceitas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $dbh->prepare("SELECT id, nome FROM receitas ORDER BY id DESC LIMIT 5");
+            $stmt->execute();
+            $ultimasReceitas = $stmt->fetchAll();
 
         ?>
 
@@ -72,7 +72,7 @@ require('../ajax/connection.php');
                         <ul class="divide-y">
                             <?php foreach ($ultimasReceitas as $r): ?>
                                 <li class="py-2 text-gray-700 font-medium">
-                                    <?= htmlspecialchars($r['nome']) ?>
+                                    <?= $r['nome'] ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>

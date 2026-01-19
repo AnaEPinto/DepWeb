@@ -64,7 +64,7 @@ $favoritos = $stmt->fetchAll(PDO::FETCH_OBJ);
         <?php else: ?>
 
         <p class="text-center text-gray-500 mt-10">Ainda não tens receitas favoritas.</p>
-        
+
         <?php endif; ?>
     </div>
 
