@@ -1,7 +1,10 @@
 <?php 
 session_start();  
 require('ajax/connection.php');
+
+$busca = $_GET['busca'] ?? '';
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
@@ -11,11 +14,11 @@ require('ajax/connection.php');
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-[#F6F4F3]">
+<body class="bg-[#F6F4F3] min-h-screen flex flex-col">
 
     <?php require('includes/nav.php'); ?>
 
-    <div class="px-12 py-8">
+    <div class="flex-grow px-12 py-8">
         <div class="flex"> 
             <div class="hidden md:block lg:w-64 sticky top-4 bg-white p-5 rounded-xl shadow-md border border-gray-100">
 
@@ -55,10 +58,17 @@ require('ajax/connection.php');
             </div>
 
             <?php
-                $sql  = "SELECT * FROM receitas";
-                $stmt = $dbh->prepare($sql);
+                if ($busca != '') {
+                    $sql = "SELECT * FROM receitas WHERE nome LIKE :busca";
+                    $stmt = $dbh->prepare($sql);
+                    $stmt->bindValue(':busca', "%$busca%");
+                } else {
+                    $sql = "SELECT * FROM receitas";
+                    $stmt = $dbh->prepare($sql);
+                }
                 $stmt->execute();
             ?>
+
             <div class="flex-1 md:px-4">
                 <h1 class="text-3xl font-bold mb-6 text-gray-800">Receitas</h1>
 
@@ -85,7 +95,7 @@ require('ajax/connection.php');
 
                     <div class="receita bg-white rounded-xl shadow-sm overflow-hidden relative group"data-categoria="<?= $categoria ?>">
 
-                        <img src="imagem/<?= $imagem ?>" alt="<?= $nome ?>" class="w-full h-48 object-cover">
+                        <img src="imagem/<?= $imagem ?>" alt="<?= $nome ?>" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
 
                         <?php if ($userId): ?>
                         <button class="favorito-btn absolute top-3 right-3 bg-[#FFFFFF]/90 p-2 rounded-full text-gray-400 hover:text-red-500 hover:bg-[#FFFFFF] transition-colors shadow-sm <?= $estaFavorito ? 'text-red-500' : 'text-gray-400 hover:text-red-500' ?>"
@@ -116,45 +126,78 @@ require('ajax/connection.php');
     <?php require('includes/footer.php'); ?> 
     
     <script>
-document.querySelectorAll('input[name="categorias"]').forEach(radio => {
-    radio.onclick = () => {
-        document.querySelectorAll('.receita').forEach(r => {
-            r.style.display =
-                r.dataset.categoria === radio.value ? 'block' : 'none';
-        });
-    };
-});
-</script>
-
-
-    <script>
-    document.querySelectorAll('.favorito-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const receitaId = btn.dataset.id;
-
-            try {
-                const response = await fetch('auth/adicionarFavoritos.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'id=' + encodeURIComponent(receitaId)
+        document.querySelectorAll('input[name="categorias"]').forEach(radio => {
+            radio.onclick = () => {
+                document.querySelectorAll('.receita').forEach(r => {
+                    r.style.display =
+                        r.dataset.categoria === radio.value ? 'block' : 'none';
                 });
+            };
+        });
 
-                const data = await response.json();
+        document.querySelectorAll('.favorito-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const receitaId = btn.dataset.id;
 
-                if (data.favorito) {
-                    btn.classList.remove('text-gray-400');
-                    btn.classList.add('text-red-500');
-                } else {
-                    btn.classList.remove('text-red-500');
-                    btn.classList.add('text-gray-400');
+                try {
+                    const response = await fetch('auth/adicionarFavoritos.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: 'id=' + encodeURIComponent(receitaId)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.favorito) {
+                        btn.classList.remove('text-gray-400');
+                        btn.classList.add('text-red-500');
+                    } else {
+                        btn.classList.remove('text-red-500');
+                        btn.classList.add('text-gray-400');
+                    }
+                } catch (error) {
+                    console.error('Erro ao atualizar favorito:', error);
+                    alert('Ocorreu um erro. Tente novamente.');
                 }
-            } catch (error) {
-                console.error('Erro ao atualizar favorito:', error);
-                alert('Ocorreu um erro. Tente novamente.');
+            });
+        });
+
+        let visiveis = 6;
+        let categoriaAtual = null;
+
+        function atualizarLista() {
+            const receitas = document.querySelectorAll(".receita");
+            let mostradas = 0;
+
+            receitas.forEach(r => {
+                if (!categoriaAtual || r.dataset.categoria === categoriaAtual) {
+                    if (mostradas < visiveis) {
+                        r.style.display = "block";
+                        mostradas++;
+                    } else {
+                        r.style.display = "none";
+                    }
+                } else {
+                    r.style.display = "none";
+                }
+            });
+        }
+
+        document.querySelectorAll('input[name="categorias"]').forEach(radio => {
+            radio.addEventListener("click", () => {
+                categoriaAtual = radio.value;
+                visiveis = 6;
+                atualizarLista();
+            });
+        });
+
+        window.addEventListener("scroll", () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+                visiveis += 6;
+                atualizarLista();
             }
         });
-    });
+        atualizarLista();
     </script>
-
 </body>
 </html>
