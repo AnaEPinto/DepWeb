@@ -40,14 +40,16 @@ session_start();
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Palavra-passe</label>
                 <input name="password" type="password" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
-                    title="Mínimo 8 caracteres, com maiúscula, minúscula e número"
-                   class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm"
+                    title="Mínimo 8 caracteres, com maiúscula, minúscula e número!"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm"
                 >
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Palavra-passe</label>
-                <input name="password2" type="password" required class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm">
+                <input name="password2" type="password" required pattern="password = password2"
+                    title="As palavras-passe devem coincidir!"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm">
             </div>
 
             <button type="submit" class="w-full bg-[#B09B80] text-white px-6 py-2 rounded-md hover:bg-[#4E2D0C] transition">

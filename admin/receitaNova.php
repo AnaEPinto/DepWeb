@@ -71,7 +71,7 @@
                         <input name="quantidade" type="number" min="1" required class="w-full border rounded px-3 py-2">
                     </div>
 
-                     <div>
+                    <div>
                         <label class="block mb-1 font-medium">Orçamento</label>
                         <select name="orcamento" required class="w-full border rounded px-3 py-2">
                             <option value="">Selecione uma categoria</option>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../ajax/connection.php';
+require('/../../ajax/connection.php');
 
 /* valida ID */
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -9,7 +9,6 @@ if ($id <= 0) {
     exit;
 }
 
-/* busca receita */
 $stmt = $dbh->prepare("SELECT * FROM receitas WHERE id = ?");
 $stmt->execute([$id]);
 $receita = $stmt->fetch();
@@ -35,12 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $stmt = $dbh->prepare("
-        UPDATE receitas SET
-            nome=?, tempo=?, ingredientes=?, preparacao=?,
-            categoria=?, descricao=?, quantidade=?, orcamento=?, imagem=?
-        WHERE id=?
-    ");
+    $stmt = $dbh->prepare(" UPDATE receitas SET nome=?, tempo=?, ingredientes=?, preparacao=?, 
+    categoria=?, descricao=?, quantidade=?, orcamento=?, imagem=? WHERE id=?"
+    );
 
     $stmt->execute([
         $_POST['nome'],
@@ -59,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt">
 <head>
