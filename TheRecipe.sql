@@ -16,25 +16,37 @@
 
 
 -- A despejar estrutura da base de dados para therecipe
-DROP DATABASE IF EXISTS `therecipe`;
 CREATE DATABASE IF NOT EXISTS `therecipe` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `therecipe`;
 
+-- A despejar estrutura para tabela therecipe.comentario
+CREATE TABLE IF NOT EXISTS `comentario` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_utilizador` int NOT NULL,
+  `id_receita` int NOT NULL,
+  `comentario` tinytext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- A despejar dados para tabela therecipe.comentario: ~1 rows (aproximadamente)
+INSERT INTO `comentario` (`id`, `id_utilizador`, `id_receita`, `comentario`) VALUES
+	(1, 1, 2, 'Adorei esta receita');
+
 -- A despejar estrutura para tabela therecipe.favoritos
-DROP TABLE IF EXISTS `favoritos`;
 CREATE TABLE IF NOT EXISTS `favoritos` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_receita` int NOT NULL,
   `id_utilizador` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- A despejar dados para tabela therecipe.favoritos: ~1 rows (aproximadamente)
+-- A despejar dados para tabela therecipe.favoritos: ~3 rows (aproximadamente)
 INSERT INTO `favoritos` (`id`, `id_receita`, `id_utilizador`) VALUES
-	(12, 1, 1);
+	(25, 8, 1),
+	(26, 2, 1),
+	(27, 4, 1);
 
 -- A despejar estrutura para tabela therecipe.receitas
-DROP TABLE IF EXISTS `receitas`;
 CREATE TABLE IF NOT EXISTS `receitas` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -47,9 +59,9 @@ CREATE TABLE IF NOT EXISTS `receitas` (
   `quantidade` int DEFAULT NULL,
   `orcamento` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=117 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- A despejar dados para tabela therecipe.receitas: ~40 rows (aproximadamente)
+-- A despejar dados para tabela therecipe.receitas: ~41 rows (aproximadamente)
 INSERT INTO `receitas` (`id`, `nome`, `tempo`, `ingredientes`, `preparacao`, `imagem`, `categoria`, `descricao`, `quantidade`, `orcamento`) VALUES
 	(1, 'Caldo Verde', '35 min', '4 batatas em pedaços\n1 cebola\n2 dentes de alho\n2 c. sopa de azeite\n250 g caldo verde\n1/2 chouriço em pedaços, mais em rodelas para decorar\n1 c. café sal', 'Coza as batatas, a cebola e dois dentes de alho na água.\nQuando estiver cozido, triture tudo e leve novamente ao lume.\nJunte o caldo verde e os pedaços de chouriço e deixe cozer durante 10 minutos.\nRetire a sopa do lume e termine colocando um fio de azeite e umas rodelas de chouriço.', 'caldo_verde.jpg', 'Sopa', 'Sopa tradicional portuguesa, reconfortante e cremosa.', 4, 'Económico'),
 	(2, 'Bacalhau à Brás', '45 min', '4 ovos\n3 gemas\n1 c. café sal\nPimenta q.b.\n4 c. sopa azeite\n1 cebola em meias luas\n1 folha de louro\n3 dentes de alho picados\n350 g de bacalhau desfiado\n125 g batata palha frita\nSalsa picada q.b.\nAzeitonas pretas q.b.', 'Coloque azeite numa frigideira alta, a aquecer, junte a cebola e o louro e deixe refogar.\nJunte os dentes de alho à frigideira e mexa. Junte o bacalhau já desfiado, calque e misture bem com a cebola.\nJunte cerca de 75g batatas palha frita e misture.\nParta os ovos para dentro de uma taça, tempere de sal e pimenta e bata bem.\nRetire o louro da frigideira, junte os ovos e misture bem (se estiver muito líquido, pode levar ao lume um pouco). Adicione a restante batata palha e envolva bem.\nJunte a salsa picada e as azeitonas antes de servir.', 'bacalhau_bras.jpg', 'Peixe', 'Clássico prato de bacalhau com ovos cremosos e batata palha crocante.', 4, 'Médio'),
@@ -90,23 +102,24 @@ INSERT INTO `receitas` (`id`, `nome`, `tempo`, `ingredientes`, `preparacao`, `im
 	(38, 'Robalo no Forno', '50 min', '2 c. sopa de azeite\r\nCoentros, q.b.\r\nRodelas de limão, q.b.\r\n1 cebola laminada\r\n1 robalo limpo\r\n1 c. café sal\r\nPimenta, q.b.\r\n1 ramo de salsa fresca\r\nCoentros, q.b.\r\n2 c. sopa azeite\r\nVinho branco, q.b.\r\nBatatinhas assadas, q.b', 'Pré-aquece o forno a 250 ° C.\r\nCubra o fundo de uma assadeira grande com 2 colheres de sopa de azeite extra-virgem e os coentros, para o peixe não tocar no fundo da assadeira.\r\nEm cima das ervas, coloque as rodelas de limão e as fatias de cebola. Tempere o peixe com uma boa quantidade de sal e pimenta, tanto por dentro como por fora, e coloque sobre a cama de ervas e limão.\r\nRegue com 2 colheres de sopa de azeite e um pouco de vinho branco. Por fim, cubra a assadeira com papel de alumínio e coloque no forno durante 15-20 minutos.\r\nSirva com batatinhas assadas.', 'robalo_assado.jpg', 'Peixe', 'Este prato de robalo assado com ervas aromáticas e gengibre combina intensidade e delicadeza, saúde e cor, frescura e complexidade. Descubra como preparar.', 4, 'Económico'),
 	(39, 'Frango Assado', '1h 20min', '1 frango inteiro\r\n250 ml vinho branco\r\n3 a 4 c.sopa azeite\r\n1 c. chá massa de pimentão\r\n4 dentes de alho\r\nSumo de 1 limão\r\nSal, q.b.\r\nPimenta, q.b.\r\n2 folhas de louro\r\nAlecrim, q.b.\r\n350 g batatas\r\nTomilho, q.b.', 'Comece por preparar a marinada: misture o vinho branco com o azeite, a massa de pimentão, os dentes de alho inteiros, o sumo de limão e misture bem.\r\nDisponha o frango inteiro num tabuleiro largo. Pique um limão com um garfo e coloque-o na cavidade do frango.\r\nCom fio de cozinha ate bem as pernas. Regue a marinada por cima do frango, espalhe bem com as mãos.\r\nTempere com sal e pimenta, parta 2 folhas de louro em pedaços e junte ainda alecrim a gosto. Leve ao forno a 190ºC por pelo menos 1 hora até o frango ficar bem douradinho.\r\nEntretanto, descasque as batatas. Corte em pedaços. Regue com azeite, tempere com sal e pimenta e leve ao forno, por 25 a 30 minutos mexendo regularmente.\r\nSirva o frango assado com limão juntamente com as batatas assadas no forno. Decore com rodelas de limão e mais alecrim.', 'frango_assado.jpg', 'Crane', 'Um clássico irresistível que nunca sai de moda: frango saboroso e batatas douradas, perfeito para uma refeição em família!', 6, 'Económico'),
 	(40, 'Ovos Recheados', '25 min', '4 ovos\r\n2 fatias de presunto em tiras finas\r\n2 c. sopa de iogurte natural\r\n1 c. chá de mostarda dijon\r\n1 c. café de sal\r\nPimenta q.b.\r\nSalsa picada q.b.', 'Cozer os ovos em água, assim que começar a ferver deixar cozer por 15 minutos.\r\nRetirar do lume e mergulhar em água fria.\r\nDescascar os ovos e reservar.\r\nNuma frigideira fritar as tiras de presunto até ficar crocante e reservar.\r\nColocar as gemas numa taça, esmagar bem e juntar o iogurte, a mostarda, o sal e a pimenta e a salsa picada e envolver bem.\r\nColocar esta mistura no centro da clara cozida, polvilhar com o crocante de presunto e decorar com salsa picada.', 'ovos_recheado.jpg', 'Entradas', 'Os ovos recheados são uma entrada prática e saborosa, que transforma a simplicidade dos ovos cozidos num petisco irresistível e cheio de criatividade.', 4, 'Económico'),
-	(116, 'Rolo de Carne com Massa Folhada', '45 min', '1 c. sopa de azeite<br />\r\n1 cebola picada<br />\r\n2 dentes de alho picados<br />\r\n400 g de carne picada<br />\r\nOrégãos q.b.<br />\r\nAlecrim seco q.b.<br />\r\n1 folha de louro<br />\r\n1 c. café de sal<br />\r\nPimenta q.b.<br />\r\n1 embalagem de massa folhada<br />\r\n100g de espinafres<br />\r\n1 ovo batido<br />\r\nSalada q.b.', 'Numa frigideira, refogue a cebola picada e os dentes de alho picados finamente num fio de azeite.<br />\r\nQuando a cebola estiver tenra, junte a carne, polvilhe com os orégãos e o alecrim, acrescente o louro e envolva bem.<br />\r\nTempere com sal e pimenta e cozinhe até a carne ficar bem dourada.<br />\r\nRetire o louro e deixe arrefecer.<br />\r\nEstenda a massa folhada e, a meio, disponha a carne picada sobre o comprido.<br />\r\nPor cima coloque os espinafres e enrole, cobrindo tudo com a massa e apertando bem dos lados, de modo a criar um rolo fechado.<br />\r\nPincele com o ovo batido e leve ao forno por cerca de 20 minutos ou até a massa estar bem cozinhada e dourada.<br />\r\nAcompanhe com uma salada.', 'e3fb15b6f293e1191a05dd50f908cd65.jpg', 'Carne', 'Uma versão prática e deliciosa do clássico bife Wellington: este rolo de carne picada, envolvido em massa folhada, é perfeito para impressionar sem complicações.', 4, 'Económico');
+	(116, 'Rolo de Carne com Massa Folhada', '45 min', '1 c. sopa de azeite<br />\r\n1 cebola picada<br />\r\n2 dentes de alho picados<br />\r\n400 g de carne picada<br />\r\nOrégãos q.b.<br />\r\nAlecrim seco q.b.<br />\r\n1 folha de louro<br />\r\n1 c. café de sal<br />\r\nPimenta q.b.<br />\r\n1 embalagem de massa folhada<br />\r\n100g de espinafres<br />\r\n1 ovo batido<br />\r\nSalada q.b.', 'Numa frigideira, refogue a cebola picada e os dentes de alho picados finamente num fio de azeite.<br />\r\nQuando a cebola estiver tenra, junte a carne, polvilhe com os orégãos e o alecrim, acrescente o louro e envolva bem.<br />\r\nTempere com sal e pimenta e cozinhe até a carne ficar bem dourada.<br />\r\nRetire o louro e deixe arrefecer.<br />\r\nEstenda a massa folhada e, a meio, disponha a carne picada sobre o comprido.<br />\r\nPor cima coloque os espinafres e enrole, cobrindo tudo com a massa e apertando bem dos lados, de modo a criar um rolo fechado.<br />\r\nPincele com o ovo batido e leve ao forno por cerca de 20 minutos ou até a massa estar bem cozinhada e dourada.<br />\r\nAcompanhe com uma salada.', 'e3fb15b6f293e1191a05dd50f908cd65.jpg', 'Carne', 'Uma versão prática e deliciosa do clássico bife Wellington: este rolo de carne picada, envolvido em massa folhada, é perfeito para impressionar sem complicações.', 4, 'Económico'),
+	(117, 'a', '5', 'ss<br />\r\nsss<br />\r\nsssss', 'hjshbd<br />\r\nwljbnjwf<br />\r\nsbjbjhsw', '6966792e344f2.png', 'Entradas', 'gagdgh', 2, 'Económico');
 
 -- A despejar estrutura para tabela therecipe.utilizadores
-DROP TABLE IF EXISTS `utilizadores`;
 CREATE TABLE IF NOT EXISTS `utilizadores` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(200) DEFAULT NULL,
   `password` varchar(350) DEFAULT NULL,
   `email` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- A despejar dados para tabela therecipe.utilizadores: ~3 rows (aproximadamente)
+-- A despejar dados para tabela therecipe.utilizadores: ~4 rows (aproximadamente)
 INSERT INTO `utilizadores` (`id`, `nome`, `password`, `email`) VALUES
 	(1, 'Eduarda', 'Eduarda1234', 'ana.eduarda.pinto71@gmail.com'),
 	(5, 'Ana', 'Duda12345', 'ana.eduarda.pinto2005@gmail.com'),
-	(6, 'Duda', 'Dudaduda123', 'ana.eduarda.71@gmail.com');
+	(6, 'Duda', 'Dudaduda123', 'ana.eduarda.71@gmail.com'),
+	(7, 'Claudia', 'Claudia1234', 'claudia71@gmail.com');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
