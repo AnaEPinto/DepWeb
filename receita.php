@@ -1,7 +1,15 @@
-<?php 
+<?php
     session_start();
     require('ajax/connection.php');
+
+    $id_receita = filter_input(INPUT_GET, 'receita', FILTER_VALIDATE_INT);
+
+    if (!$id_receita) {
+        header('Location: index.php');
+        exit;
+    }
 ?>
+
 <?php
     if(isset($_GET['receita'])){
         $idReceita = $_GET['receita'];
@@ -22,10 +30,7 @@
 
 <body class= "bg-[#F6F4F3]">
 
-    <?php
-        $pagina = 'receitas';
-        require('includes/nav.php');
-    ?>
+    <?php require('includes/nav.php'); ?>
     
     <?php 
         $sql = 'SELECT * FROM receitas WHERE id = :id';
@@ -148,21 +153,38 @@
     <div class="my-10">
         <hr class="border-black mx-10 my-2">
     </div> 
-    
+
+    <?php if (isset($_SESSION['user_id'])):?>
+
     <div class="w-full max-w-xl mx-auto px-2">
-        <h4 class="text-base sm:text-xl font-semibold mb-2">Deixe aqui a sua opinião:</h4>
-        <form class="flex flex-col gap-3">
-            <textarea class="border border-black rounded-md p-3 text-lg" rows="4" placeholder="Escreva aqui o que achou desta receita..."></textarea>
+        <h4 class="text-base sm:text-xl font-semibold mb-2">
+            Deixe aqui a sua opinião:
+        </h4>
+
+        <form method="POST" action="auth/adicionarComentario.php" class="flex flex-col gap-3">
+            <textarea name="comentario" class="border border-black rounded-md p-3 text-lg" rows="4" placeholder="Escreva aqui o que achou desta receita..." required> </textarea>
+
+            <input type="hidden" name="id_receita" value="<?= $id_receita ?>">
+
             <button type="submit" class="self-end bg-[#B09B80] text-white px-6 py-2 rounded-md hover:bg-[#4E2D0C] transition">
                 Enviar
             </button>
         </form>
     </div>
 
-    <div class="z-20 relative">
-        <?php require('includes/footer.php'); ?>
-    </div>
+    <?php else: ?>
 
+    <div class="text-center pb-4">
+        <p class="text-gray-700">
+            Tens de <a href="login.php" class="text-[#B09B80] underline">iniciar sessão</a>
+            para deixar um comentário.
+        </p>
+    </div>
+    
+    <?php endif; ?>
+
+    <?php require('includes/footer.php'); ?>
+    
     <script>
     document.querySelectorAll('.favorito-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
