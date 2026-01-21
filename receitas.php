@@ -27,32 +27,32 @@ $busca = $_GET['busca'] ?? '';
                 <div class="border-b border-black my-2"></div>
             
                 <div class="flex items-center m-2">
-                    <input type="radio" id="entradas" name="categorias" value="Entradas" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
+                    <input type="checkbox" id="entradas" name="categorias" value="Entradas" class="categoria-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
                     <label for="entradas" class="mx-2 text-sm font-medium text-gray-700 cursor-pointer">Entradas</label>
                 </div>
 
                 <div class="flex items-center m-2">
-                    <input type="radio" id="massas" name="categorias" value="Massas" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
+                    <input type="checkbox" id="massas" name="categorias" value="Massas" class="categoria-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
                     <label for="massas" class="mx-2 text-sm font-medium text-gray-700 cursor-pointer">Massas</label>
                 </div>
 
                 <div class="flex items-center m-2">
-                    <input type="radio" id="carne" name="categorias" value="Carne" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
+                    <input type="checkbox" id="carne" name="categorias" value="Carne" class="categoria-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
                     <label for="carne" class="mx-2 text-sm font-medium text-gray-700 cursor-pointer">Carne</label>
                 </div>
 
                 <div class="flex items-center m-2">
-                    <input type="radio" id="peixe" name="categorias" value="Peixe" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
+                    <input type="checkbox" id="peixe" name="categorias" value="Peixe" class="categoria-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
                     <label for="peixe" class="mx-2 text-sm font-medium text-gray-700 cursor-pointer">Peixe</label>
                 </div>
 
                 <div class="flex items-center m-2">
-                    <input type="radio" id="vegetariano" name="categorias" value="Vegetariano" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
+                    <input type="checkbox" id="vegetariano" name="categorias" value="Vegetariano" class="categoria-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
                     <label for="vegetariano" class="mx-2 text-sm font-medium text-gray-700 cursor-pointer">Vegetariano</label>
                 </div>
 
                 <div class="flex items-center m-2">
-                    <input type="radio" id="sobremesas" name="categorias" value="Sobremesas" class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
+                    <input type="checkbox" id="sobremesas" name="categorias" value="Sobremesas" class="categoria-checkbox w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500">
                     <label for="sobremesas" class="mx-2 text-sm font-medium text-gray-700 cursor-pointer">Sobremesas</label>
                 </div>
             </div>
@@ -126,13 +126,25 @@ $busca = $_GET['busca'] ?? '';
     <?php require('includes/footer.php'); ?> 
     
     <script>
-        document.querySelectorAll('input[name="categorias"]').forEach(radio => {
-            radio.onclick = () => {
-                document.querySelectorAll('.receita').forEach(r => {
-                    r.style.display =
-                        r.dataset.categoria === radio.value ? 'block' : 'none';
+        document.querySelectorAll('.categoria-checkbox').forEach(cb => {
+            cb.addEventListener('change', () => {
+
+                // permite apenas um ativo
+                document.querySelectorAll('.categoria-checkbox').forEach(outro => {
+                if (outro !== cb) outro.checked = false;
                 });
-            };
+
+                const ativo = document.querySelector('.categoria-checkbox:checked');
+
+                document.querySelectorAll('.receita').forEach(r => {
+                if (!ativo) {
+                    r.style.display = 'block'; // nenhuma selecionada → mostra tudo
+                } else {
+                    r.style.display =
+                    r.dataset.categoria === ativo.value ? 'block' : 'none';
+                }
+                });
+            });
         });
 
         document.querySelectorAll('.favorito-btn').forEach(btn => {
@@ -163,41 +175,48 @@ $busca = $_GET['busca'] ?? '';
         });
 
         let visiveis = 6;
-        let categoriaAtual = null;
+        let categoriaAtiva = null;
 
-        function atualizarLista() {
-            const receitas = document.querySelectorAll(".receita");
-            let mostradas = 0;
+        function atualizarReceitas() {
+        const receitas = document.querySelectorAll('.receita');
+        let mostradas = 0;
 
-            receitas.forEach(r => {
-                if (!categoriaAtual || r.dataset.categoria === categoriaAtual) {
-                    if (mostradas < visiveis) {
-                        r.style.display = "block";
-                        mostradas++;
-                    } else {
-                        r.style.display = "none";
-                    }
-                } else {
-                    r.style.display = "none";
-                }
-            });
-        }
+        receitas.forEach(r => {
+            const categoria = r.dataset.categoria;
 
-        document.querySelectorAll('input[name="categorias"]').forEach(radio => {
-            radio.addEventListener("click", () => {
-                categoriaAtual = radio.value;
-                visiveis = 6;
-                atualizarLista();
-            });
-        });
+            const passaFiltro = !categoriaAtiva || categoria === categoriaAtiva;
 
-        window.addEventListener("scroll", () => {
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
-                visiveis += 6;
-                atualizarLista();
+            if (passaFiltro && mostradas < visiveis) {
+            r.style.display = 'block';
+            mostradas++;
+            } else {
+            r.style.display = 'none';
             }
         });
-        atualizarLista();
+        }
+
+        document.querySelectorAll('.categoria-checkbox').forEach(cb => { cb.addEventListener('change', () => {
+
+            document.querySelectorAll('.categoria-checkbox').forEach(outro => {
+            if (outro !== cb) outro.checked = false;
+            });
+
+            categoriaAtiva = cb.checked ? cb.value : null;
+            visiveis = 6;
+            atualizarReceitas();
+        });
+        });
+
+        window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+            visiveis += 6;
+            atualizarReceitas();
+        }
+        });
+
+        atualizarReceitas();
+
+
     </script>
 </body>
 </html>
