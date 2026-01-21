@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$email    = trim($_POST['email']);
-$password = trim($_POST['password']);
+$email    = trim($_POST['email'] ?? '');
+$password = trim($_POST['password'] ?? '');
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $_SESSION['ligado'] = false;
@@ -22,9 +22,10 @@ if ($password === '') {
     exit;
 }
 
-$sql = "SELECT * FROM utilizadores WHERE email = :email";
-$stmt = $dbh->prepare($sql);
-$stmt->execute([':email' => $email]);
+$stmt = $dbh->prepare(
+    "SELECT id, email, nome, password FROM utilizadores WHERE email = :email"
+);
+$stmt->execute(['email' => $email]);
 $user = $stmt->fetchObject();
 
 if (!$user || $password !== $user->password) {
@@ -33,11 +34,12 @@ if (!$user || $password !== $user->password) {
     exit;
 }
 
-$_SESSION['ligado']   = true;
-$_SESSION['user_id']  = $user->id;
-$_SESSION['email']    = $user->email;
-$_SESSION['nome']     = $user->nome;
-$_SESSION['iniciais'] = strtoupper(substr($user->nome, 0, 1));
+$_SESSION['ligado']  = true;
+$_SESSION['user_id'] = $user->id;
+$_SESSION['email']   = $user->email;
+$_SESSION['nome']    = $user->nome;
+
+$_SESSION['iniciais'] = strtoupper($user->nome[0] ?? '');
 
 header('Location: ../index.php');
 exit;
