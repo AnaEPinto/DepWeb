@@ -22,30 +22,19 @@ if ($password !== $password2) {
     exit;
 }
 
-if (
-    strlen($password) < 8 ||
-    !preg_match('/[A-Z]/', $password) ||
-    !preg_match('/[a-z]/', $password) ||
-    !preg_match('/[0-9]/', $password)
-) {
+if (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password)) {
     header("Location: ../registo.php");
     exit;
 }
 
-$password = password($password);
-
 $stmt = $dbh->prepare(" INSERT INTO utilizadores (nome, email, password) VALUES (:nome, :email, :password) ");
 
-$stmt->execute([
-    ':nome'     => $nome,
-    ':email'    => $email,
-    ':password' => $password_hash
-]);
+$stmt->execute([':nome'     => $nome, ':email'    => $email, ':password' => $password]);
 
-$_SESSION['ligado']   = true;
-$_SESSION['nome']     = $nome;
-$_SESSION['email']    = $email;
-$_SESSION['user_id']  = $dbh->lastInsertId();
+$_SESSION['ligado']  = true;
+$_SESSION['nome']    = $nome;
+$_SESSION['email']   = $email;
+$_SESSION['user_id'] = $dbh->lastInsertId();
 
 header("Location: ../index.php");
 exit;

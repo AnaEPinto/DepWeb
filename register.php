@@ -47,7 +47,7 @@ session_start();
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Palavra-passe</label>
-                <input name="password2" type="password" required pattern="password = password2"
+                <input name="password2" type="password" required 
                     title="As palavras-passe devem coincidir!"
                     class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm">
             </div>

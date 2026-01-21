@@ -7,12 +7,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$email    = isset($_POST['email']) ? trim($_POST['email']) : null;
-$password = isset($_POST['password']) ? trim($_POST['password']) : null;
+$email    = trim($_POST['email']);
+$password = trim($_POST['password']);
 
-$valido = filter_var($email, FILTER_VALIDATE_EMAIL) ? true : false;
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $_SESSION['ligado'] = false;
+    header('Location: ../login.php?erro=email');
+    exit;
+}
 
-if (!$password) {
+if ($password === '') {
     $_SESSION['ligado'] = false;
     header('Location: ../login.php?erro=password');
     exit;
@@ -20,33 +24,20 @@ if (!$password) {
 
 $sql = "SELECT * FROM utilizadores WHERE email = :email";
 $stmt = $dbh->prepare($sql);
-$stmt->bindParam(':email', $email);
-$stmt->execute();
+$stmt->execute([':email' => $email]);
 $user = $stmt->fetchObject();
 
-if (!$user) {
+if (!$user || $password !== $user->password) {
     $_SESSION['ligado'] = false;
     header('Location: ../login.php?erro=login');
     exit;
 }
 
-if ($password !== $user->password) {
-    $_SESSION['ligado'] = false;
-    header('Location: ../login.php?erro=login');
-    exit;
-}
+$_SESSION['ligado']   = true;
+$_SESSION['user_id']  = $user->id;
+$_SESSION['email']    = $user->email;
+$_SESSION['nome']     = $user->nome;
+$_SESSION['iniciais'] = strtoupper(substr($user->nome, 0, 1));
 
-if ($valido) {
-    $_SESSION['ligado']   = true;
-    $_SESSION['user_id']  = $user->id;
-    $_SESSION['email']    = $user->email;
-    $_SESSION['nome']     = $user->nome;
-    $_SESSION['iniciais'] = strtoupper(substr($user->nome, 0, 1));
-    header('Location: ../index.php');
-    exit;
-} else {
-    $_SESSION['ligado'] = false;
-    unset($_SESSION['nome'], $_SESSION['iniciais']);
-    header('Location: ../login.php?erro=login');
-    exit;
-}
+header('Location: ../index.php');
+exit;
